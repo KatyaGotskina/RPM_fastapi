@@ -3,6 +3,7 @@ import asyncio
 import argparse
 from pathlib import Path
 from typing import List
+from datetime import datetime, time
 
 from sqlalchemy import insert
 
@@ -23,6 +24,14 @@ async def main(fixtures: List[str]) -> None:
 
         with open(fixture_path, 'r') as file:
             values = json.load(file)
+            for data in values:
+                if data.get('duration', ''):
+                    data['duration'] = time(*map(int, data['duration'].split(':')))
+                if data.get('start', ''):
+                    data['start'] = datetime.strptime(data['start'], "%Y-%m-%d %H:%M:%S%z")
+                if data.get('end', ''):
+                    data['end'] = datetime.strptime(data['end'], "%Y-%m-%d %H:%M:%S%z")
+
 
         async with async_session() as session:
             await session.execute(insert(model).values(values))
