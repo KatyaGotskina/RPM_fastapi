@@ -9,7 +9,7 @@ from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.service import ServiceModel
 
 
-@service_router.put('/update')
+@service_router.put('/')
 async def update_service_data(body: ServiceModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
     try:
         updated_data = (

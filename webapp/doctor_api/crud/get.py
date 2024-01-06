@@ -10,7 +10,7 @@ from fastapi.responses import ORJSONResponse
 from sqlalchemy.orm import selectinload
 
 
-@doctor_router.get('/get_by_id/{id:int}', response_model=DoctorModel)
+@doctor_router.get('/{id:int}', response_model=DoctorModel)
 async def get_patient(id: int, session: AsyncSession = Depends(get_session)) -> dict[str, Any]:
     select_resp = select(Doctor).where(Doctor.id == id)    #.options(selectinload(Doctor.services))
     doctor_elem = (await session.scalars(select_resp)).one()

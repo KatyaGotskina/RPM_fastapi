@@ -11,7 +11,7 @@ from webapp.access.password.get_hash import hash_password
 from webapp.metrics import patient_counter, patient_errors_counter
 
 
-@patient_router.post('/create')
+@patient_router.post('/')
 async def create_user(body: UserCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
     patient_counter.labels(endpoint='/patient/create').inc()
     try:

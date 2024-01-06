@@ -1,5 +1,5 @@
-from pydantic import BaseModel, ConfigDict
-from datetime import datetime
+from pydantic import BaseModel
+from datetime import datetime, date
 
 
 class TimetableCreateModel(BaseModel):
@@ -7,3 +7,9 @@ class TimetableCreateModel(BaseModel):
     user_id: int
     service_id: int
     start: datetime
+
+
+class GetHoursResp(BaseModel):
+    doctor_id: int = None
+    search_date: date
+    service_id: int

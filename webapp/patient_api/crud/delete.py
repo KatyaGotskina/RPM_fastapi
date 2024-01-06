@@ -10,7 +10,7 @@ from webapp.pydantic_schemas.user import ID
 from webapp.metrics import patient_counter, patient_errors_counter
 
 
-@patient_router.delete('/delete/{id:int}')
+@patient_router.delete('/{id:int}')
 async def delete_user(id: int, session: AsyncSession = Depends(get_session)) -> Response:
     patient_counter.labels(endpoint='/patient/delete').inc()
     try:

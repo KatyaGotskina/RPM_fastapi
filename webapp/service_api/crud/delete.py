@@ -9,7 +9,7 @@ from fastapi.responses import Response
 from webapp.pydantic_schemas.user import ID
 
 
-@service_router.delete('/delete/{id:int}')
+@service_router.delete('/{id:int}')
 async def delete_service(id: int, session: AsyncSession = Depends(get_session)) -> Response:
     try:
         await session.execute(

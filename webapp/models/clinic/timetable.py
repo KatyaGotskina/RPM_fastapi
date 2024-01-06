@@ -22,3 +22,5 @@ class Timetable(Base):
     service_id: Mapped[int] = mapped_column(Integer, ForeignKey(f'{DEFAULT_SCHEMA}.service.id'))
 
     start: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    end: Mapped[datetime] = mapped_column(DateTime(timezone=True))

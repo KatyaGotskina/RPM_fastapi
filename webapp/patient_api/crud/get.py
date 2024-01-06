@@ -20,7 +20,7 @@ async def get_patients(session: AsyncSession = Depends(get_session)) -> ORJSONRe
     return ORJSONResponse(users_json)
 
 
-@patient_router.get('/get_by_id/{id:int}', response_model=UserModel)
+@patient_router.get('/{id:int}', response_model=UserModel)
 async def get_patient(id: int, session: AsyncSession = Depends(get_session)) -> dict[str, Any]:
     patient_counter.labels(endpoint='/patient/get_by_id').inc()
     try:

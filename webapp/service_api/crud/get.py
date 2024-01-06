@@ -15,7 +15,7 @@ async def get_services(session: AsyncSession = Depends(get_session)) -> ORJSONRe
     services_json = [ServiceModel.model_validate(service).model_dump(mode='json') for service in services]
     return ORJSONResponse(services_json)
 
-@service_router.get('/get_by_id/{id:int}', response_model=ServiceModel)
+@service_router.get('/{id:int}', response_model=ServiceModel)
 async def get_service(id: int, session: AsyncSession = Depends(get_session)) -> dict[str, Any]:
     select_resp = select(Service).where(Service.id == id)
     service = (await session.scalars(select_resp)).one()

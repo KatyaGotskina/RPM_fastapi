@@ -6,14 +6,13 @@ from fastapi import Depends, HTTPException
 from sqlalchemy import delete
 from starlette import status
 from fastapi.responses import Response
-from webapp.pydantic_schemas.user import ID
 
 
-@patient_router.delete('/delete_appointment')
-async def delete_appointment(body: ID, session: AsyncSession = Depends(get_session)) -> Response:
+@patient_router.delete('/appointment/{timetable_id:int}')
+async def delete_appointment(timetable_id: int, session: AsyncSession = Depends(get_session)) -> Response:
     try:
         await session.execute(
-            delete(Timetable).where(Timetable.id == body.id),
+            delete(Timetable).where(Timetable.id == timetable_id),
         )
         await session.commit()
         return Response(status_code=status.HTTP_204_NO_CONTENT)

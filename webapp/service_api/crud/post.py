@@ -9,7 +9,7 @@ from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.service import ServiceCreateModel
 
 
-@service_router.post('/create')
+@service_router.post('/')
 async def create_service(body: ServiceCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
     try:
         new_id = (
