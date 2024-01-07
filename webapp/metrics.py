@@ -33,9 +33,6 @@ DEFAULT_BUCKETS = (
     float('+inf'),
 )
 
-
-
-# TODO in middleware
 patient_counter = prometheus_client.Counter(
     'number_of_responses',
     '',
