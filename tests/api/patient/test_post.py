@@ -46,7 +46,7 @@ async def test_post(
     db_session: None,
 ) -> None:
     response = await client.post(
-        URLS['patient']['create'], 
+        URLS['patient']['default'], 
         json={
             'username': username, 
             'password': password,

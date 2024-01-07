@@ -6,7 +6,7 @@ import pytest_asyncio
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from webapp.db.postgres import engine, get_session
@@ -37,9 +37,9 @@ async def _load_fixtures(db_session: AsyncSession, fixtures: List[Path]):
 
         with open(fixture, 'r') as file:
             values = json.load(file)
-
         await db_session.execute(insert(model).values(values))
         await db_session.commit()
+        print((await db_session.execute(select(model))).all())
 
     return
 

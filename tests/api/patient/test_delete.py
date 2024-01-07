@@ -28,6 +28,6 @@ async def test_delete_user(
     id: int,
     expected_status: int
 ) -> None:
-    response = await client.delete(URLS['patient']['delete'] + f'/{id}')
+    response = await client.delete(URLS['patient']['default'] + f'/{id}')
 
     assert response.status_code == expected_status
