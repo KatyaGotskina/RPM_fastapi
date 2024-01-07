@@ -12,7 +12,7 @@ from datetime import timedelta
 
 
 @patient_router.post('/appointment')
-async def make_appointment(body: TimetableCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
+async def make_appointment(body: TimetableCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse | Response:
     doctor_working_hours = (
         await session.scalars(
             select(Timetable.start).where(

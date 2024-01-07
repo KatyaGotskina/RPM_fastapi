@@ -1,6 +1,6 @@
 from redis.asyncio import Redis
 
-redis: Redis
+redis = Redis
 
 def get_redis() -> Redis:
     global redis

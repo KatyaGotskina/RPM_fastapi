@@ -47,9 +47,9 @@ async def get_free_hours(body: GetHoursResp, session: AsyncSession = Depends(get
             select(DoctorToService.doctor_id).where(DoctorToService.service_id == body.service_id)
         )
     ).all()
-    result = set()
+    result: set = set()
     for doctor_id in doctor_ids:
-        free_hours = await hours_for_service_by_doctor(body.search_date, doctor_id, body.service_id, session)
-        free_hours = set(free_hours)
+        free_hours: List[str] = await hours_for_service_by_doctor(body.search_date, doctor_id, body.service_id, session)
+        free_hours: set[str] = set(free_hours)
         result = result.union(free_hours)
     return ORJSONResponse({'free_time': list(free_hours)})

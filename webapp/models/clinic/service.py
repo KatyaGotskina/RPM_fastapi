@@ -28,5 +28,5 @@ class Service(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'duration': self.duration
+            'duration': self.duration.isoformat()
         }
