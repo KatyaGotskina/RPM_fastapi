@@ -6,7 +6,6 @@ from fastapi import Depends, HTTPException
 from sqlalchemy import delete
 from starlette import status
 from fastapi.responses import Response
-from webapp.pydantic_schemas.user import ID
 
 
 @service_router.delete('/{id:int}')

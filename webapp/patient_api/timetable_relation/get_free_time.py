@@ -5,14 +5,15 @@ from webapp.models.clinic.service import Service
 from sqlalchemy.ext.asyncio import AsyncSession
 from webapp.db.postgres import get_session
 from fastapi import Depends
+from typing import List
 from sqlalchemy import select, func
 from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.timetable import GetHoursResp
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from webapp.patient_api.timetable_relation.config import CLOSING_TIME, OPENNING_TIME
 
 
-async def hours_for_service_by_doctor(date, doctor_id, service_id, session):
+async def hours_for_service_by_doctor(date: date, doctor_id: int, service_id: int, session: AsyncSession) -> List[str]:
     free_hours = []
     service_duration = (await session.scalars(select(Service.duration).where(Service.id == service_id))).one()
     duration = timedelta(hours=service_duration.hour, minutes=service_duration.minute)

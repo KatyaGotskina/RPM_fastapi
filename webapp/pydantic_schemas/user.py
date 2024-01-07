@@ -17,5 +17,15 @@ class UserCreateModel(BaseModel):
     last_name: str
 
 
-class ID(BaseModel):
-    id: int
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class UserLoginResponse(BaseModel):
+    access_token: str
+
+
+class UserChangePassword(BaseModel):
+    password: str
+    new_password: str

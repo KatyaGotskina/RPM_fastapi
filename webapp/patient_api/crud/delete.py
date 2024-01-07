@@ -6,7 +6,6 @@ from fastapi import Depends, HTTPException
 from sqlalchemy import delete
 from starlette import status
 from fastapi.responses import Response
-from webapp.pydantic_schemas.user import ID
 from webapp.metrics import patient_counter, patient_errors_counter
 
 

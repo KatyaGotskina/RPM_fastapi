@@ -21,15 +21,14 @@ async def main(fixtures: List[str]) -> None:
     for fixture in fixtures:
         fixture_path = Path(fixture)
         model = metadata.tables[fixture_path.stem]
-
         with open(fixture_path, 'r') as file:
             values = json.load(file)
-            for data in values:
-                if data.get('duration', ''):
+            if fixture_path.stem == 'clinic.service':
+                for data in values:
                     data['duration'] = time(*map(int, data['duration'].split(':')))
-                if data.get('start', ''):
+            elif fixture_path.stem == 'clinic.timetable':
+                for data in values:
                     data['start'] = datetime.strptime(data['start'], "%Y-%m-%d %H:%M:%S%z")
-                if data.get('end', ''):
                     data['end'] = datetime.strptime(data['end'], "%Y-%m-%d %H:%M:%S%z")
 
 
