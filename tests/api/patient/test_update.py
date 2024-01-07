@@ -37,8 +37,8 @@ async def test_post(
     expected_status: int,
     db_session: None,
 ) -> None:
-    response = await client.post(
-        URLS['patient']['update'], 
+    response = await client.put(
+        URLS['patient']['default'], 
         json={
             'id': id,
             'username': username, 

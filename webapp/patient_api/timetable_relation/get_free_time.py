@@ -11,6 +11,7 @@ from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.timetable import GetHoursResp
 from datetime import timedelta, datetime, date
 from webapp.patient_api.timetable_relation.config import CLOSING_TIME, OPENNING_TIME
+from webapp.metrics import patient_counter
 
 
 async def hours_for_service_by_doctor(date: date, doctor_id: int, service_id: int, session: AsyncSession) -> List[str]:
@@ -39,6 +40,7 @@ async def hours_for_service_by_doctor(date: date, doctor_id: int, service_id: in
 
 @patient_router.post('/free_hours')
 async def get_free_hours(body: GetHoursResp, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
+    patient_counter.labels(endpoint='POST /patient/free_hours').inc()
     if body.doctor_id:
         free_hours = await hours_for_service_by_doctor(body.search_date, body.doctor_id, body.service_id, session)
         return ORJSONResponse({'free_time': free_hours})

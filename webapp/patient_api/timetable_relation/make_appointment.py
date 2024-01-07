@@ -9,10 +9,12 @@ from starlette import status
 from fastapi.responses import ORJSONResponse, Response
 from webapp.pydantic_schemas.timetable import TimetableCreateModel
 from datetime import timedelta
+from webapp.metrics import patient_counter, patient_errors_counter
 
 
 @patient_router.post('/appointment')
 async def make_appointment(body: TimetableCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse | Response:
+    patient_counter.labels(endpoint='POST /patient/appointment').inc()
     doctor_working_hours = (
         await session.scalars(
             select(Timetable.start).where(
@@ -25,6 +27,7 @@ async def make_appointment(body: TimetableCreateModel, session: AsyncSession = D
     duration = timedelta(hours=service_duration.hour, minutes=service_duration.minute)
     for working_time in doctor_working_hours:
         if not(working_time - duration > body.start or working_time + duration < body.start):
+            patient_errors_counter.labels(endpoint='POST /patient/appointment').inc()
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail='This working time is already taken',
@@ -45,6 +48,7 @@ async def make_appointment(body: TimetableCreateModel, session: AsyncSession = D
             )
         ).one()
     except Exception:
+        patient_errors_counter.labels(endpoint='POST /patient/appointment').inc()
         return Response(status_code=status.HTTP_400_BAD_REQUEST)
     await session.commit()
     return ORJSONResponse(
