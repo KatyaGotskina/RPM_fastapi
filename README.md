@@ -1,12 +1,12 @@
 **ENV файл**
-BIND_IP: str
-BIND_PORT: int
-DB_URL: str
-JWT_SECRET_SALT: str
+- BIND_IP: str
+- BIND_PORT: int
+- DB_URL: str
+- JWT_SECRET_SALT: str
 
-REDIS_HOST: str
-REDIS_PORT: int
-REDIS_PASSWORD: str
+- REDIS_HOST: str
+- REDIS_PORT: int
+- REDIS_PASSWORD: str
 
 для каждой модели в webapp/{model_name}_api есть crud методы, а так же:
 ---
