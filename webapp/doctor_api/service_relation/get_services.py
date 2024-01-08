@@ -6,6 +6,7 @@ from fastapi import Depends
 from fastapi.responses import ORJSONResponse
 from typing import List
 from webapp.pydantic_schemas.service import ServiceModel
+from webapp.metrics import resp_counter
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from webapp.db.redis import get_redis
@@ -13,8 +14,10 @@ import json
 import ast
 
 
+
 @doctor_router.get('/services/{doctor_id:int}', response_model=List[ServiceModel])
 async def get_doctor_services(doctor_id: int, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
+    resp_counter.labels(endpoint='GET /doctor/services/').inc()
     redis = get_redis()
     services_bytes = await redis.get(f'doctor {doctor_id} services')
     services = ast.literal_eval(services_bytes.decode('utf-8'))

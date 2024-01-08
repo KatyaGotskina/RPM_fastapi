@@ -2,16 +2,30 @@ from webapp.doctor_api.router import doctor_router
 from webapp.models.clinic.doctor import Doctor
 from sqlalchemy.ext.asyncio import AsyncSession
 from webapp.db.postgres import get_session
-from fastapi import Depends
 from sqlalchemy import select
-from typing import Any
+from typing import Any, List
 from webapp.pydantic_schemas.doctor import DoctorModel
 from fastapi.responses import ORJSONResponse
-from sqlalchemy.orm import selectinload
+from webapp.metrics import resp_counter, errors_counter
+from fastapi import Depends, HTTPException
+from starlette import status
 
 
 @doctor_router.get('/{id:int}', response_model=DoctorModel)
-async def get_patient(id: int, session: AsyncSession = Depends(get_session)) -> dict[str, Any]:
-    select_resp = select(Doctor).where(Doctor.id == id)    #.options(selectinload(Doctor.services))
-    doctor_elem = (await session.scalars(select_resp)).one()
-    return DoctorModel.model_validate(doctor_elem).model_dump(mode='json')
+async def get_doctor(id: int, session: AsyncSession = Depends(get_session)) -> dict[str, Any]:
+    resp_counter.labels(endpoint='GET /doctor/').inc()
+    try:
+        select_resp = select(Doctor).where(Doctor.id == id)
+        doctor_elem = (await session.scalars(select_resp)).one()
+        return DoctorModel.model_validate(doctor_elem).model_dump(mode='json')
+    except Exception:
+        errors_counter.labels(endpoint='GET /doctor/').inc()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+
+@doctor_router.get('/all', response_model=List[DoctorModel])
+async def get_doctors(session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
+    resp_counter.labels(endpoint='GET /doctor/all').inc()
+    doctors = (await session.execute(select(Doctor))).scalars()
+    doctors_json = [Doctor.model_validate(doctor).model_dump(mode='json') for doctor in doctors]
+    return ORJSONResponse(doctors_json)

@@ -7,10 +7,12 @@ from sqlalchemy import update
 from starlette import status
 from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.service import ServiceModel
+from webapp.metrics import resp_counter, errors_counter
 
 
 @service_router.put('/')
 async def update_service_data(body: ServiceModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
+    resp_counter.labels(endpoint='PUT /service/').inc()
     try:
         updated_data = (
             await session.execute(
@@ -29,8 +31,8 @@ async def update_service_data(body: ServiceModel, session: AsyncSession = Depend
                 'duration': updated_data.duration,
             },
         )
-    except Exception as err:
-        print(err)
+    except Exception:
+        errors_counter.labels(endpoint='PUT /service/').inc()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail='name is already used',

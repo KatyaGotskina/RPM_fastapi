@@ -7,12 +7,12 @@ from sqlalchemy import update
 from starlette import status
 from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.user import UserModel
-from webapp.metrics import patient_counter, patient_errors_counter
+from webapp.metrics import resp_counter, errors_counter
 
 
 @patient_router.put('/')
 async def update_user_data(body: UserModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
-    patient_counter.labels(endpoint='PUT /patient').inc()
+    resp_counter.labels(endpoint='PUT /patient').inc()
     try:
         updated_data = (
             await session.execute(
@@ -35,7 +35,7 @@ async def update_user_data(body: UserModel, session: AsyncSession = Depends(get_
         )
     except Exception as err:
         print(err)
-        patient_errors_counter.labels(endpoint='PUT /patient').inc()
+        errors_counter.labels(endpoint='PUT /patient').inc()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail='username is already used',

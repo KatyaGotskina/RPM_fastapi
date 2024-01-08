@@ -8,12 +8,12 @@ from starlette import status
 from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.user import UserCreateModel
 from webapp.access.password.get_hash import hash_password
-from webapp.metrics import patient_counter, patient_errors_counter
+from webapp.metrics import resp_counter, errors_counter
 
 
 @patient_router.post('/')
 async def create_user(body: UserCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
-    patient_counter.labels(endpoint='POST /patient').inc()
+    resp_counter.labels(endpoint='POST /patient').inc()
     try:
         new_id = (
             await session.scalars(
@@ -28,7 +28,7 @@ async def create_user(body: UserCreateModel, session: AsyncSession = Depends(get
             )
         ).one()
     except Exception:
-        patient_errors_counter.labels(endpoint='POST /patient').inc()
+        errors_counter.labels(endpoint='POST /patient').inc()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail='username is already used',

@@ -13,3 +13,9 @@ class DoctorModel(BaseModel):
 class DoctorServiceID(BaseModel):
     doctor_id: int
     service_id: int
+
+
+class DoctorCreateModel(BaseModel):
+    specialization: str
+    first_name: str
+    last_name: str

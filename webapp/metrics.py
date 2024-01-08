@@ -33,17 +33,18 @@ DEFAULT_BUCKETS = (
     float('+inf'),
 )
 
-patient_counter = prometheus_client.Counter(
+resp_counter = prometheus_client.Counter(
     'number_of_responses',
     '',
     ['endpoint'],
 )
 
-patient_errors_counter = prometheus_client.Counter(
+errors_counter = prometheus_client.Counter(
     'number_of_exceptions',
     '',
     ['endpoint'],
 )
+
 
 # histogram_quantile(0.99, sum(rate(sirius_deps_latency_seconds_bucket[1m])) by (le, endpoint))
 # среднее время обработки за 1 мин

@@ -7,10 +7,12 @@ from sqlalchemy import insert
 from starlette import status
 from fastapi.responses import ORJSONResponse
 from webapp.pydantic_schemas.service import ServiceCreateModel
+from webapp.metrics import resp_counter, errors_counter
 
 
 @service_router.post('/')
 async def create_service(body: ServiceCreateModel, session: AsyncSession = Depends(get_session)) -> ORJSONResponse:
+    resp_counter.labels(endpoint='POST /service/').inc()
     try:
         new_id = (
             await session.scalars(
@@ -23,6 +25,7 @@ async def create_service(body: ServiceCreateModel, session: AsyncSession = Depen
             )
         ).one()
     except Exception:
+        errors_counter.labels(endpoint='POST /service/').inc()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail='name is already used',
