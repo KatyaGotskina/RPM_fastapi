@@ -46,15 +46,6 @@ errors_counter = prometheus_client.Counter(
 )
 
 
-# histogram_quantile(0.99, sum(rate(sirius_deps_latency_seconds_bucket[1m])) by (le, endpoint))
-# среднее время обработки за 1 мин
-# DEPS_LATENCY = prometheus_client.Histogram(
-#     'sirius_deps_latency_seconds',
-#     '',
-#     ['endpoint'],
-#     buckets=DEFAULT_BUCKETS,
-# )
-
 def metrics(request: Request) -> Response:
     if 'prometheus_multiproc_dir' in os.environ:
         registry = CollectorRegistry()
