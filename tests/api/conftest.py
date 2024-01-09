@@ -1,12 +1,10 @@
 import json
-import uuid
 from pathlib import Path
 from typing import AsyncGenerator, List
 import pytest_asyncio
-import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import insert, select
+from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from webapp.db.postgres import engine, get_session
@@ -25,9 +23,15 @@ async def db_session(app: FastAPI) -> AsyncGenerator[AsyncSession, None]:
         session_maker = async_sessionmaker(bind=connection)
         session = session_maker()
 
+        async def mocked_session() -> AsyncGenerator[AsyncSession, None]:
+            yield session
+
+        app.dependency_overrides[get_session] = mocked_session
+
         yield session
 
         await connection.rollback()
+
 
 
 @pytest_asyncio.fixture()
@@ -37,12 +41,10 @@ async def _load_fixtures(db_session: AsyncSession, fixtures: List[Path]):
 
         with open(fixture, 'r') as file:
             values = json.load(file)
-        await db_session.execute(insert(model).values(values))
+        await db_session.execute(insert(model).values(values))  
         await db_session.commit()
-        print((await db_session.execute(select(model))).all())
 
     return
-
 
 @pytest_asyncio.fixture()
 async def _common_api_fixture(

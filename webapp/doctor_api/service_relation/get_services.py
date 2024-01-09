@@ -20,8 +20,8 @@ async def get_doctor_services(doctor_id: int, session: AsyncSession = Depends(ge
     resp_counter.labels(endpoint='GET /doctor/services/').inc()
     redis = get_redis()
     services_bytes = await redis.get(f'doctor {doctor_id} services')
-    services = ast.literal_eval(services_bytes.decode('utf-8'))
-    if services:
+    if services_bytes:
+        services = ast.literal_eval(services_bytes.decode('utf-8'))
         return ORJSONResponse({'services': services})
     select_resp = select(Doctor).where(Doctor.id == doctor_id).options(selectinload(Doctor.services))
     sqlalch_obj_services = (await session.scalars(select_resp)).one().services

@@ -21,19 +21,17 @@ FIXTURES_PATH = BASE_DIR / 'fixtures'
         )
     ],
 )
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 @pytest.mark.usefixtures('_common_api_fixture')
 async def test_get_user(
     client: AsyncClient,
     expected_status: int
 ) -> None:
     response = await client.get(URLS['patient']['get_all'])
-    print(response.json())
 
     assert response.status_code == expected_status
 
-    response = await client.get(URLS['patient']['default'] + '/2')
-    print(response.json())
+    response = await client.get(URLS['patient']['default'] + '2')
 
     assert response.status_code == expected_status
 
