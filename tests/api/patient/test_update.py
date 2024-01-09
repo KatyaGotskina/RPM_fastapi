@@ -25,7 +25,7 @@ FIXTURES_PATH = BASE_DIR / 'fixtures'
         ),
     ],
 )
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 @pytest.mark.usefixtures('_common_api_fixture')
 async def test_post(
     id: int,

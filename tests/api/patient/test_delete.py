@@ -21,13 +21,13 @@ FIXTURES_PATH = BASE_DIR / 'fixtures'
         )
     ],
 )
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 @pytest.mark.usefixtures('_common_api_fixture')
 async def test_delete_user(
     client: AsyncClient,
     id: int,
     expected_status: int
 ) -> None:
-    response = await client.delete(URLS['patient']['default'] + f'/{id}')
+    response = await client.delete(URLS['patient']['default'] + str(id))
 
     assert response.status_code == expected_status
